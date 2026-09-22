@@ -23,21 +23,21 @@ class MemberTest {
         em.persist(teamA);
         em.persist(teamB);
 
-        Member member1 = new Member("member1", 25, teamA);
-        Member member2 = new Member("member2", 30, teamA);
-        Member member3 = new Member("member3", 31, teamB);
-        Member member4 = new Member("member4", 35, teamB);
+//        Member member1 = new Member("member1", 25, teamA);
+//        Member member2 = new Member("member2", 30, teamA);
+//        Member member3 = new Member("member3", 31, teamB);
+//        Member member4 = new Member("member4", 35, teamB);
 
-        em.persist(member1);
-        em.persist(member2);
-        em.persist(member3);
-        em.persist(member4);
+//        em.persist(member1);
+//        em.persist(member2);
+//        em.persist(member3);
+//        em.persist(member4);
 
         em.flush();
         em.clear();
 
         List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
-        
+
         for (Member member : members) {
             System.out.println("Member: " + member);
             System.out.println("Member's Team -> " + member.getTeam());

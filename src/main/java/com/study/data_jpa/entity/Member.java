@@ -28,13 +28,8 @@ public class Member {
     @JoinColumn(name = "team_id")
     private Team team;
 
-    public Member(String username, int age, Team team) {
+    public Member(String username) {
         this.username = username;
-        this.age = age;
-
-        if (team != null) {
-            changeTeam(team);
-        }
     }
 
     public void changeTeam(Team team) {

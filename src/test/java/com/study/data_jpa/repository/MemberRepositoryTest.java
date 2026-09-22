@@ -1,6 +1,8 @@
 package com.study.data_jpa.repository;
 
+import com.study.data_jpa.dto.MemberDto;
 import com.study.data_jpa.entity.Member;
+import com.study.data_jpa.entity.Team;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,9 @@ class MemberRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private TeamRepository teamRepository;
 
     @Test
     public void basicCrud() {
@@ -56,5 +61,36 @@ class MemberRepositoryTest {
 
         List<Member> findMember = memberRepository.findUser("member1", 20);
         Assertions.assertThat(findMember.get(0)).isEqualTo(member1);
+    }
+
+    @Test
+    public void findUsernameList() {
+        Member member1 = new Member("member1", 20);
+        Member member2 = new Member("member2", 30);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<String> usernameList = memberRepository.findUsernameList();
+
+        for (String s : usernameList) {
+            System.out.println("유저명: " + s);
+        }
+    }
+
+    @Test
+    public void findMemberDto() {
+        Team teamA = new Team("teamA");
+        teamRepository.save(teamA);
+
+        Member member1 = new Member("member1", 20);
+        memberRepository.save(member1);
+
+        member1.changeTeam(teamA);
+
+        List<MemberDto> memberDto = memberRepository.findMemberDto();
+
+        for (MemberDto dto : memberDto) {
+            System.out.println("멤버 DTO: " + dto.toString());
+        }
     }
 }

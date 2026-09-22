@@ -4,6 +4,7 @@ import com.study.data_jpa.dto.MemberDto;
 import com.study.data_jpa.entity.Member;
 import com.study.data_jpa.entity.Team;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,5 +93,21 @@ class MemberRepositoryTest {
         for (MemberDto dto : memberDto) {
             System.out.println("멤버 DTO: " + dto.toString());
         }
+    }
+
+    @Test
+    public void returnType() {
+        Member member1 = new Member("member1", 20);
+        Member member2 = new Member("member2", 30);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> findMemberList = memberRepository.findListByUsername("member1");
+        Member findMember = memberRepository.findMemberByUsername("member2");
+        Optional<Member> optionalByUsername = memberRepository.findOptionalByUsername("ghost-member");
+
+        Assertions.assertThat(findMemberList.get(0)).isEqualTo(member1);
+        Assertions.assertThat(findMember).isEqualTo(member2);
+        Assertions.assertThat(optionalByUsername).isEmpty();
     }
 }

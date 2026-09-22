@@ -1,5 +1,6 @@
 package com.study.data_jpa.repository;
 
+import com.study.data_jpa.dto.MemberDto;
 import com.study.data_jpa.entity.Member;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.username = :username and m.age = :age")
     List<Member> findUser(@Param("username") String username, @Param("age") int age);
+
+    @Query("select m.username from Member m ")
+    List<String> findUsernameList();
+
+    @Query("select new com.study.data_jpa.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
+    List<MemberDto> findMemberDto();
 }

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 class MemberJpaRepositoryTest {
 
     @Autowired MemberJpaRepository memberJpaRepository;
-    @Autowired MemberRepository memberRepository;
 
 //    @Test
 //    public void testMember() {

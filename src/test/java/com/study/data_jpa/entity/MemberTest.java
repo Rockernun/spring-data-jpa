@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
 class MemberTest {
 
     @PersistenceContext

@@ -9,16 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class MemberRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
 
     @Test
-    @Transactional
     public void basicCrud() {
-        Member member1 = new Member("member1");
-        Member member2 = new Member("member2");
+        Member member1 = new Member("member1", 20);
+        Member member2 = new Member("member2", 30);
         memberRepository.save(member1);
         memberRepository.save(member2);
 
@@ -34,5 +34,16 @@ class MemberRepositoryTest {
         memberRepository.delete(member2);
         long count = memberRepository.count();
         Assertions.assertThat(count).isEqualTo(0);
+    }
+
+    @Test
+    public void findByUsernameAndAgeGreaterThan() {
+        Member member1 = new Member("member1", 20);
+        Member member2 = new Member("member1", 30);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> findMember = memberRepository.findByUsernameAndAgeGreaterThan("member1", 25);
+        Assertions.assertThat(findMember.size()).isEqualTo(1);
     }
 }

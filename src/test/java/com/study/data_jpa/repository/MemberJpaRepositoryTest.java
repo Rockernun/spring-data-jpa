@@ -38,8 +38,8 @@ class MemberJpaRepositoryTest {
 
     @Test
     public void basicCrud() {
-        Member member1 = new Member("member1");
-        Member member2 = new Member("member2");
+        Member member1 = new Member("member1", 20);
+        Member member2 = new Member("member2", 30);
         memberJpaRepository.save(member1);
         memberJpaRepository.save(member2);
 
@@ -55,5 +55,16 @@ class MemberJpaRepositoryTest {
         memberJpaRepository.delete(member2);
         long count = memberJpaRepository.count();
         Assertions.assertThat(count).isEqualTo(0);
+    }
+
+    @Test
+    public void findByUsernameAndAgeGreaterThan() {
+        Member member1 = new Member("member1", 20);
+        Member member2 = new Member("member1", 30);
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+
+        List<Member> findMember = memberJpaRepository.findByUsernameAndAgeGreaterThan("member1", 25);
+        Assertions.assertThat(findMember.size()).isEqualTo(1);
     }
 }

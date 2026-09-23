@@ -185,4 +185,165 @@ class MemberRepositoryTest {
 
         Assertions.assertThat(resultCount).isEqualTo(3);
     }
+
+    @Test
+    public void findMemberLazy() {
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 11, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        em.flush();
+        em.clear();
+
+        List<Member> allMembers = memberRepository.findAll();
+
+        for (Member member : allMembers) {
+            System.out.println("멤버명: " + member.getUsername());
+            System.out.println("멤버의 클래스 정보: " + member.getClass());
+            System.out.println("팀의 클래스 정보: " + member.getTeam().getClass());
+            System.out.println("멤버의 팀명: " + member.getTeam().getName());
+        }
+
+        /**
+         * (N + 1) 문제
+         *
+         * select
+         *     m1_0.member_id,
+         *     m1_0.age,
+         *     m1_0.team_id,
+         *     m1_0.username
+         * from
+         *     member m1_0
+         *
+         * select
+         *     t1_0.team_id,
+         *     t1_0.name
+         * from
+         *     team t1_0
+         * where
+         *     t1_0.team_id=?
+         *
+         * select
+         *     t1_0.team_id,
+         *     t1_0.name
+         * from
+         *     team t1_0
+         * where
+         *     t1_0.team_id=?
+         *
+         * 멤버명: member1
+         * 멤버의 클래스 정보: class com.study.data_jpa.entity.Member
+         * 팀의 클래스 정보: class com.study.data_jpa.entity.Team$HibernateProxy
+         * 멤버의 팀명: teamA
+         *
+         * 멤버명: member2
+         * 멤버의 클래스 정보: class com.study.data_jpa.entity.Member
+         * 팀의 클래스 정보: class com.study.data_jpa.entity.Team$HibernateProxy
+         * 멤버의 팀명: teamB
+         */
+    }
+
+    @Test
+    public void findMemberWithFetchJoin() {
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 11, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        em.flush();
+        em.clear();
+
+        List<Member> allMembers = memberRepository.findMemberFetchJoin();
+
+        for (Member member : allMembers) {
+            System.out.println("멤버명: " + member.getUsername());
+            System.out.println("멤버의 클래스 정보: " + member.getClass());
+            System.out.println("팀의 클래스 정보: " + member.getTeam().getClass());
+            System.out.println("멤버의 팀명: " + member.getTeam().getName());
+        }
+
+        /**
+         * select
+         *     m1_0.member_id,
+         *     m1_0.age,
+         *     t1_0.team_id,
+         *     t1_0.name,
+         *     m1_0.username
+         * from
+         *     member m1_0
+         * left join
+         *     team t1_0
+         *         on t1_0.team_id=m1_0.team_id
+         *
+         * 멤버명: member1
+         * 멤버의 클래스 정보: class com.study.data_jpa.entity.Member
+         * 팀의 클래스 정보: class com.study.data_jpa.entity.Team
+         * 멤버의 팀명: teamA
+         *
+         * 멤버명: member2
+         * 멤버의 클래스 정보: class com.study.data_jpa.entity.Member
+         * 팀의 클래스 정보: class com.study.data_jpa.entity.Team
+         * 멤버의 팀명: teamB
+         */
+    }
+
+    @Test
+    public void findMemberWithEntityGraph() {
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 11, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        em.flush();
+        em.clear();
+
+        List<Member> allMembers = memberRepository.findAll();
+
+        for (Member member : allMembers) {
+            System.out.println("멤버명: " + member.getUsername());
+            System.out.println("멤버의 클래스 정보: " + member.getClass());
+            System.out.println("팀의 클래스 정보: " + member.getTeam().getClass());
+            System.out.println("멤버의 팀명: " + member.getTeam().getName());
+        }
+
+        /**
+         * select
+         *     m1_0.member_id,
+         *     m1_0.age,
+         *     t1_0.team_id,
+         *     t1_0.name,
+         *     m1_0.username
+         * from
+         *     member m1_0
+         * left join
+         *     team t1_0
+         *         on t1_0.team_id=m1_0.team_id
+         *
+         * 멤버명: member1
+         * 멤버의 클래스 정보: class com.study.data_jpa.entity.Member
+         * 팀의 클래스 정보: class com.study.data_jpa.entity.Team
+         * 멤버의 팀명: teamA
+         *
+         * 멤버명: member2
+         * 멤버의 클래스 정보: class com.study.data_jpa.entity.Member
+         * 팀의 클래스 정보: class com.study.data_jpa.entity.Team
+         * 멤버의 팀명: teamB
+         */
+    }
 }

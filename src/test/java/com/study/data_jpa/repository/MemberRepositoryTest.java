@@ -9,6 +9,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -109,5 +114,51 @@ class MemberRepositoryTest {
         Assertions.assertThat(findMemberList.get(0)).isEqualTo(member1);
         Assertions.assertThat(findMember).isEqualTo(member2);
         Assertions.assertThat(optionalByUsername).isEmpty();
+    }
+
+    @Test
+    public void paging1() {
+        memberRepository.save(new Member("member1", 20));
+        memberRepository.save(new Member("member2", 20));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 30));
+        memberRepository.save(new Member("member5", 30));
+        memberRepository.save(new Member("member6", 40));
+
+        int age = 20;
+        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by(Direction.DESC, "username"));
+        Page<Member> pageByAge = memberRepository.findByAge(age, pageRequest);
+        Page<MemberDto> toMap = pageByAge.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+
+        List<Member> content = pageByAge.getContent();
+        long totalCount = pageByAge.getTotalElements();
+
+        Assertions.assertThat(content.size()).isEqualTo(2);
+        Assertions.assertThat(totalCount).isEqualTo(6);
+        Assertions.assertThat(pageByAge.getNumber()).isEqualTo(0);
+        Assertions.assertThat(pageByAge.getTotalPages()).isEqualTo(3);
+        Assertions.assertThat(pageByAge.isFirst()).isTrue();
+        Assertions.assertThat(pageByAge.hasNext()).isTrue();
+    }
+
+    @Test
+    public void paging2() {
+        memberRepository.save(new Member("member1", 20));
+        memberRepository.save(new Member("member2", 20));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 30));
+        memberRepository.save(new Member("member5", 30));
+        memberRepository.save(new Member("member6", 40));
+
+//        int age = 20;
+//        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by(Direction.DESC, "username"));
+//        Slice<Member> pageByAge = memberRepository.findByAge(age, pageRequest);
+//
+//        List<Member> content = pageByAge.getContent();
+//
+//        Assertions.assertThat(content.size()).isEqualTo(2);
+//        Assertions.assertThat(pageByAge.getNumber()).isEqualTo(0);
+//        Assertions.assertThat(pageByAge.isFirst()).isTrue();
+//        Assertions.assertThat(pageByAge.hasNext()).isTrue();
     }
 }

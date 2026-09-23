@@ -6,10 +6,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+// @Rollback(false)
 class MemberJpaRepositoryTest {
 
     @Autowired MemberJpaRepository memberJpaRepository;
@@ -82,5 +84,19 @@ class MemberJpaRepositoryTest {
 
         Assertions.assertThat(findByPage.size()).isEqualTo(2);
         Assertions.assertThat(totalCount).isEqualTo(3);
+    }
+
+    @Test
+    public void bulkUpdate() {
+        memberJpaRepository.save(new Member("member1", 10));
+        memberJpaRepository.save(new Member("member2", 18));
+        memberJpaRepository.save(new Member("member3", 19));
+        memberJpaRepository.save(new Member("member4", 20));
+        memberJpaRepository.save(new Member("member5", 25));
+        memberJpaRepository.save(new Member("member6", 30));
+
+        int resultCount = memberJpaRepository.bulkAgePlus(20);
+
+        Assertions.assertThat(resultCount).isEqualTo(3);
     }
 }

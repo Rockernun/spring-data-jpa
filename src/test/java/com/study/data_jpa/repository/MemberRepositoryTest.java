@@ -3,6 +3,8 @@ package com.study.data_jpa.repository;
 import com.study.data_jpa.dto.MemberDto;
 import com.study.data_jpa.entity.Member;
 import com.study.data_jpa.entity.Team;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
@@ -25,6 +27,9 @@ class MemberRepositoryTest {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Test
     public void basicCrud() {
@@ -160,5 +165,24 @@ class MemberRepositoryTest {
 //        Assertions.assertThat(pageByAge.getNumber()).isEqualTo(0);
 //        Assertions.assertThat(pageByAge.isFirst()).isTrue();
 //        Assertions.assertThat(pageByAge.hasNext()).isTrue();
+    }
+
+    @Test
+    public void bulkUpdate() {
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 18));
+        memberRepository.save(new Member("member3", 19));
+        memberRepository.save(new Member("member4", 20));
+        memberRepository.save(new Member("member5", 25));
+        memberRepository.save(new Member("member6", 30));
+
+        int resultCount = memberRepository.bulkAgePlus(20);
+//        em.flush();
+//        em.clear();
+
+        Member member5 = memberRepository.findMemberByUsername("member5");
+        System.out.println("member5의 나이는 " + member5.getAge() + "세입니다.");  // 영속성 컨텍스트를 날리지 않은 경우: "member5의 나이는 25세입니다." 출력
+
+        Assertions.assertThat(resultCount).isEqualTo(3);
     }
 }

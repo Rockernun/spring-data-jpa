@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Team {
+public class Team extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "team_id")

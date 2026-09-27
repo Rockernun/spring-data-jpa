@@ -383,4 +383,19 @@ class MemberRepositoryTest {
          *     update
          */
     }
+
+    @Test
+    public void callCustom() {
+        List<Member> memberCustomList = memberRepository.findMemberCustom();
+
+        /**
+         * select
+         *     m1_0.member_id,
+         *     m1_0.age,
+         *     m1_0.team_id,
+         *     m1_0.username
+         * from
+         *     member m1_0
+         */
+    }
 }
